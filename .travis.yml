@@ -1,0 +1,11 @@
+dist: trusty
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+before_install:
+  - mkdir -p ./lib
+  - wget https://github.com/lishid/OpenInv/releases/download/3.3.0/OpenInv.jar -P ./lib
+language: java
+sudo: false
+script: mvn clean verify
