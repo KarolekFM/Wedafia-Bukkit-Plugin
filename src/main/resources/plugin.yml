@@ -1,0 +1,6 @@
+name: Wedafia
+version: ${project.version}
+main: eu.devy.wedafia.Wedafia
+load: POSTWORLD
+authors: [SlimaKCoder]
+depend: [OpenInv]
