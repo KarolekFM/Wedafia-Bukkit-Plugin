@@ -24,35 +24,50 @@ public class PlayerJSON {
         PlayerJSON.openinv = openinv;
     }
 
-    public static JSONObject getPlayeyInfo(String player_string) {
+    public static JSONObject getPlayer(String player_string) {
         Player player = openinv.loadPlayer(openinv.matchPlayer(player_string));
 
         JSONObject json = new JSONObject();
 
         if (player != null) {
-            json.put("is_online", player.isOnline());
-            json.put("display_name", player.getDisplayName());
-            json.put("experience", player.getTotalExperience());
-            json.put("food_level", player.getFoodLevel());
-            json.put("health_level", player.getHealth());
-            json.put("is_sneaking", player.isSneaking());
-
+            json.put("status", getPlayerStatus(Optional.empty(), Optional.of(player)));
             json.put("inventory", getPlayerInv(Optional.empty(), Optional.of(player)));
         }
 
         return json;
     }
 
-    public static JSONArray getPlayerInv(Optional<String> player_string_o, Optional<Player> player_o) {
+    private static Player getPlayerFromOptionals(Optional<String> player_string_o, Optional<Player> player_o) {
         Player player = null;
 
         if (player_o.isPresent()) {
-             player = player_o.get();
+            player = player_o.get();
         } else if (player_string_o.isPresent()) {
             player = openinv.loadPlayer(openinv.matchPlayer(player_string_o.get()));
         }
 
-        JSONArray json = new JSONArray();
+        return player;
+    }
+
+    public static JSONObject getPlayerStatus(Optional<String> player_string_o, Optional<Player> player_o) {
+        Player player = getPlayerFromOptionals(player_string_o, player_o);
+
+        JSONObject json = new JSONObject();
+
+        json.put("is_online", player.isOnline());
+        json.put("display_name", player.getDisplayName());
+        json.put("experience", player.getTotalExperience());
+        json.put("food_level", player.getFoodLevel());
+        json.put("health_level", player.getHealth());
+        json.put("is_sneaking", player.isSneaking());
+
+        return json;
+    }
+
+    public static JSONObject getPlayerInv(Optional<String> player_string_o, Optional<Player> player_o) {
+        Player player = getPlayerFromOptionals(player_string_o, player_o);
+
+        JSONObject json = new JSONObject();
 
         if (player != null) {
             Inventory inv = player.getInventory();
@@ -64,14 +79,13 @@ public class PlayerJSON {
                 ItemStack item = inv.getItem(slot);
 
                 if (item != null) {
-                    json_item.put("slot", slot);
                     json_item.put("type", item.getType().name());
                     json_item.put("durability", item.getDurability());
                     json_item.put("ammount", item.getAmount());
 
                     json_item.put("meta", getItemMeta(item));
 
-                    json.add(json_item);
+                    json.put(slot, json_item);
                 }
             }
         }

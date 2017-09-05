@@ -32,7 +32,10 @@ public class WebServer {
         HandlersManager.setWedafiaInstance(wedafia);
         ServerConfiguration config = server.getServerConfiguration();
 
-        config.addHttpHandler(HandlersManager.getPlayerInvHandler(), "/");
+        config.addHttpHandler(HandlersManager.getRootHandler(), "/");
+        config.addHttpHandler(HandlersManager.getPlayerHandler(), "/player");
+        config.addHttpHandler(HandlersManager.getPlayerStatusHandler(), "/player/status");
+        config.addHttpHandler(HandlersManager.getPlayerInvHandler(), "/player/inventory");
     }
 
 }
